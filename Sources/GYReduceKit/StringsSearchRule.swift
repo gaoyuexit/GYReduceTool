@@ -47,5 +47,43 @@ extension RegexStringSearcher {
     }
 }
 
+struct SwiftSearcher: RegexStringSearcher {
+    /// 正则的双引号:  \"  \"
+    /// 表示任何东西: (.+?)
+    /// 表示 .  : \\.
+    /// 所有被引号括起来的字符串
+    let patterns = ["\"(.+?)\""]
+}
+
+struct OBJCSearcher: RegexStringSearcher {
+    
+    let patterns = ["@\"(.+?)\"", "\"(.+?)\""]
+}
+
+struct XIBSearcher: RegexStringSearcher {
+    let patterns = ["image name=\"(.+?)\""]
+}
+
+// 一般的匹配模式: 用户默认的["png", "jpg", "imageset"], 如果是用户输入了其他的
+struct GeneralSearcher: RegexStringSearcher {
+    let extensions: [String]
+    var patterns: [String] {
+        if extensions.isEmpty { return [] }
+        
+        let joined = extensions.joined(separator: "|")
+        return ["\"(.+?)\\.(\(joined))\""]
+    }
+    
+}
+
+
+
+
+
+
+
+
+
+
 
 
