@@ -10,6 +10,8 @@ import Foundation
 
 /// 字符串搜索者
 protocol StringSearcher {
+    /// 需要剔除的资源的扩展名 [.png, .jpg]
+    var extensions: [String] { get }
     func search(in content: String) -> Set<String>
 }
 
@@ -34,13 +36,14 @@ extension RegexStringSearcher {
             }
             let matches = regex.matches(in: content, options: [], range: content.fullRange)
             /// match : [NSTextCheckingResult]
-            /// NSTextCheckingResult 第一个参数为位置, 第二个参数为匹配到的结果
+            /// NSTextCheckingResult 第0个参数为位置, 第1个参数为匹配到的结果
             /// rangeAt(1) 为结果的range
             for checkingResult in matches {
                 let range = checkingResult.rangeAt(1)
                 // 提取的内容
                 let extracted = NSString(string: content).substring(with: range)
-                result.insert(extracted.plainName)
+                
+                result.insert(extracted.plainName(extensions: extensions))
             }
         }
         return result
@@ -48,6 +51,8 @@ extension RegexStringSearcher {
 }
 
 struct SwiftSearcher: RegexStringSearcher {
+    
+    let extensions: [String]
     /// 正则的双引号:  \"  \"
     /// 表示任何东西: (.+?)
     /// 表示 .  : \\.
@@ -56,21 +61,23 @@ struct SwiftSearcher: RegexStringSearcher {
 }
 
 struct OBJCSearcher: RegexStringSearcher {
-    
+    let extensions: [String]
     let patterns = ["@\"(.+?)\"", "\"(.+?)\""]
 }
 
 struct XIBSearcher: RegexStringSearcher {
+    let extensions: [String]
     let patterns = ["image name=\"(.+?)\""]
 }
 
-// 一般的匹配模式: 用户默认的["png", "jpg", "imageset"], 如果是用户输入了其他的
+// 一般的匹配模式,通用的匹配
 struct GeneralSearcher: RegexStringSearcher {
     let extensions: [String]
     var patterns: [String] {
         if extensions.isEmpty { return [] }
         
         let joined = extensions.joined(separator: "|")
+        // "(.+?).png|jpg|imageset"
         return ["\"(.+?)\\.(\(joined))\""]
     }
     

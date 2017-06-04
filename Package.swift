@@ -19,5 +19,7 @@ let package = Package(
         .Package(url: "https://github.com/kylef/PathKit", majorVersion: 0, minor: 8),
         // PDD测试驱动开发框架: 上面的`PathKit`已经集成了这个框架, 但是为了保证以后`PathKit`会不会删除他, 所以我们自己也依赖这个框架来进行测试, 因为用到test中, 我们应该只添加到 `testDependencies`中, 但是swift3还不支持, 暂且写到这里
         .Package(url: "https://github.com/kylef/Spectre.git", majorVersion: 0, minor: 7)
-    ]
+    ],
+    // 在Tests中新建了一个文件夹, swift package manager会尝试为他创建一个module, 我们让packageManager不要管`exclude`
+    exclude: ["Tests/Fixtures"]
 )

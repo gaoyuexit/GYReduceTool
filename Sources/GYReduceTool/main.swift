@@ -69,7 +69,7 @@ if help.value {
 // 取出用户输入的参数
 // 路径
 let project = projectOption.value ?? "."
-// 扩展名
+// 资源扩展名
 let resourceExtensions = resourceExtensionsOption.value ?? ["png", "jpg", "imageset"]
 // 文件扩展名
 let fileExtensions = fileExtensionsOption.value ?? ["swift", "m", "mm", "xib", "storyboard"]

@@ -15,8 +15,8 @@ class GYReduceKitTests: XCTestCase {
     func testStringPlainNameExtension() {
         let s1 = "image@2x.png"
         let s2 = "user/local/bin/find"
-        XCTAssertEqual(s1.plainName, "image")
-        XCTAssertEqual(s2.plainName, "find")
+        XCTAssertEqual(s1.plainName(extensions: ["png"]), "image")
+        XCTAssertEqual(s2.plainName(extensions: ["png"]), "find")
     }
     
     // PDD测试的入口, 需要XCTest来启动

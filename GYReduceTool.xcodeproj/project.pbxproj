@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		7368C62A1ED7462800C60504 /* GYReduceKitSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7368C6291ED7462800C60504 /* GYReduceKitSpec.swift */; };
+		73AF7D931EE4212F0042617F /* FileProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73AF7D921EE4212F0042617F /* FileProcess.swift */; };
 		OBJ_101 /* Spectre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = OBJ_49 /* Spectre.framework */; };
 		OBJ_108 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* Extensions.swift */; };
 		OBJ_109 /* GYReduceKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_10 /* GYReduceKit.swift */; };
@@ -163,6 +164,7 @@
 
 /* Begin PBXFileReference section */
 		7368C6291ED7462800C60504 /* GYReduceKitSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GYReduceKitSpec.swift; sourceTree = "<group>"; };
+		73AF7D921EE4212F0042617F /* FileProcess.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileProcess.swift; sourceTree = "<group>"; };
 		OBJ_10 /* GYReduceKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GYReduceKit.swift; sourceTree = "<group>"; };
 		OBJ_11 /* StringsSearchRule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringsSearchRule.swift; sourceTree = "<group>"; };
 		OBJ_13 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -384,7 +386,7 @@
 			name = Products;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		OBJ_5 /*  */ = {
+		OBJ_5 = {
 			isa = PBXGroup;
 			children = (
 				OBJ_6 /* Package.swift */,
@@ -393,7 +395,6 @@
 				OBJ_17 /* Dependencies */,
 				OBJ_46 /* Products */,
 			);
-			name = "";
 			sourceTree = "<group>";
 		};
 		OBJ_7 /* Sources */ = {
@@ -411,6 +412,7 @@
 				OBJ_9 /* Extensions.swift */,
 				OBJ_10 /* GYReduceKit.swift */,
 				OBJ_11 /* StringsSearchRule.swift */,
+				73AF7D921EE4212F0042617F /* FileProcess.swift */,
 			);
 			name = GYReduceKit;
 			path = Sources/GYReduceKit;
@@ -561,7 +563,7 @@
 			knownRegions = (
 				en,
 			);
-			mainGroup = OBJ_5 /*  */;
+			mainGroup = OBJ_5;
 			productRefGroup = OBJ_46 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -585,6 +587,7 @@
 				OBJ_108 /* Extensions.swift in Sources */,
 				OBJ_109 /* GYReduceKit.swift in Sources */,
 				OBJ_110 /* StringsSearchRule.swift in Sources */,
+				73AF7D931EE4212F0042617F /* FileProcess.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
