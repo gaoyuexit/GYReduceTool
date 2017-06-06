@@ -11,7 +11,10 @@ public func specGYReduceKit() {
     /// 可以使用 #file 获取当前文件的路径(即: GYReduceKitSpec.swift的路径) 类似于 #line 获取行数
     let fixtures = Path(#file).parent().parent() + "Fixtures"
     
+    
     describe("GYReductKit") {
+    
+        // 测试plainName
         $0.describe("Sting Extensions"){
             
             $0.it("should return plain name") {
@@ -28,7 +31,7 @@ public func specGYReduceKit() {
                 try expect(s4.plainName(extensions: exts)) == "local.host"
             }
         }
-        
+        // 测试 SwiftSearcher
         $0.describe("String Searcher") {
             
             $0.it("Swift Searcher works") {
@@ -48,7 +51,7 @@ public func specGYReduceKit() {
                 try expect(result[4]) == Set(["local.host"])
             }
         }
-        
+        // 测试 GYReduceKit中的方法
         $0.describe("GYReduceKit Function") {
             $0.it("should find used strings in swift") {
                 let path = fixtures + "FileStringSearcher"
@@ -67,6 +70,29 @@ public func specGYReduceKit() {
                 try expect(result) == expected
             }
         }
+        
+        // 测试FindProcess
+        $0.describe("FindProcess") {
+            
+            $0.it("should get proper files") {
+                let project = fixtures + "FindProcess"
+                let process = FindProcess(path: project.string, extensions: ["swift"], excluded: [])
+                let result = process?.execute()
+                let expected = Set(["Folder1/ignore_ext.swift"].map { (project + $0).string })
+                try expect(result) == expected
+            }
+            
+            $0.it("should get proper files with exclude pattern") {
+                let project = fixtures + "FindProcess"
+                let process = FindProcess(path: project.string, extensions: ["png", "jpg"], excluded: ["Folder1/Ignore", "Folder2/ignore_file.jpg"])
+                let result = process?.execute()
+                let expected = Set(["file1.png", "Folder1/file2.png", "Folder1/SubFolder/file3.jpg", "Folder2/file4.jpg"].map { (project + $0).string })
+                try expect(result) == expected
+            }
+        }
+        
+        
+        
         
         
     }

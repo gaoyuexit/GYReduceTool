@@ -9,6 +9,10 @@
 import Foundation
 import PathKit
 
+
+// 数字正则
+let digitalRegex = try! NSRegularExpression(pattern: "(\\d+)", options: .caseInsensitive)
+
 extension String {
     
     var fullRange: NSRange {
@@ -50,5 +54,68 @@ extension String {
         return result
     }
     */
+    
+    
+    /// 判断 帧动画图片
+    // 相似的模式
+    // other:  image01, image02...
+    // 找数字, 取最后一个结果
+    // 是否相似 other: 图片名称
+    // 即: 如果other中有数字, 则取数字前的前缀, 和数字后的后缀 分别和原来的string作比较
+    func similarPatternWithNumberIndex(other: String) -> Bool {
+        
+        let matches = digitalRegex.matches(in: other, options: [], range: other.fullRange)
+        guard matches.count >= 1 else { return false }
+        
+        let lastMatch = matches.last!
+        let digitalRange = lastMatch.rangeAt(1)
+        
+        var prefix: String? //前缀
+        var suffix: String? //后缀
+        
+        let digitalLocation = digitalRange.location
+        if digitalLocation != 0 {
+            let index = other.index(other.startIndex, offsetBy: digitalLocation)
+            prefix = other.substring(to: index)
+        }
+        // NSMaxRange = location + lenth
+        let digitalMaxRange = NSMaxRange(digitalRange)
+        if digitalMaxRange < other.utf16.count {
+            let index = other.index(other.startIndex, offsetBy: digitalMaxRange)
+            suffix = other.substring(from: index)
+        }
+        switch (prefix, suffix) {
+        case (nil, nil): return false //图片名字只有数字
+            // case let 的意思, 如果 prefix有值, 则把结果放到p中
+        // 如果prefix, suffix都有值, 就会进入这个判断, 他们的值在 p, s中
+        case (let p?, let s?): return hasPrefix(p) && hasSuffix(s)
+        case (let p?, nil): return hasPrefix(p)
+        case (nil, let s?): return hasSuffix(s)
+        }
+        
+    }
 }
+
+extension Path {
+    // 路径中文件/文件夹的大小
+    var size: Int {
+        if isDirectory {
+            let childrenPaths = try? children()
+            return (childrenPaths ?? []).reduce(0){ $0 + $1.size }
+        }else{
+            // 隐藏文件
+            if lastComponent.hasPrefix(".") { return 0 }
+            let attr = try? FileManager.default.attributesOfItem(atPath: absolute().string)
+            if let num = attr?[.size] as? NSNumber {
+                return num.intValue
+            }else {
+                return 0
+            }
+        }
+    }
+}
+
+
+
+
 

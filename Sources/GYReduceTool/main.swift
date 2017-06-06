@@ -76,6 +76,48 @@ let fileExtensions = fileExtensionsOption.value ?? ["swift", "m", "mm", "xib", "
 // 不想搜查的路径
 let excludePaths = excludePathsOption.value ?? []
 
+let tool = ResoucreReduce(projectPath: project, excludedPaths: excludePaths, resourceExtensions: resourceExtensions, fileExtensions: fileExtensions)
+
+let unusedFiles: [FileInfo]
+do{
+    print("Working....".bold)
+    unusedFiles = try tool.unusedResources()
+} catch {
+    guard let e = error as? GYReduceError else {
+        exit(EX_USAGE)
+    }
+    switch e {
+    case .noResourceExtension: print("no input ResourceExtension")
+    case .noFileExtension: print("no input FileExtension")
+    }
+    exit(EX_USAGE)
+}
+
+if unusedFiles.isEmpty {
+    print("NO unused files!!".bold)
+    exit(EX_OK)
+}
+
+for file in unusedFiles {
+    print("\(file.size)   \(file.path.string)")
+}
+
+print("Delete?")
+if let input = readLine(), input == "d" {
+    let fails = ResoucreReduce.delete(unusedFiles)
+    if !fails.isEmpty {
+        print("Some file deletion failed: \(fails)")
+    }
+}
+
+// 在该项目目录下命令行执行:
+// 1.swift build  (生成可执行文件)
+// 2.cp .build/debug/GYReduceTool /user/local/bin (将可执行文件复制到执行路径中, 这样我们就可以在任何地方用这个工具了)
+
+
+
+
+
 
 
 

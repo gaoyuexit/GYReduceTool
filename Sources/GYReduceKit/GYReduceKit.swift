@@ -33,10 +33,23 @@ enum FileType {
     }
 }
 
+public enum GYReduceError: Error {
+    /// 没有输入资源扩展
+    case noResourceExtension
+    /// 没有输入文件扩展
+    case noFileExtension
+}
 
 
 public struct FileInfo {
     
+    public let path: Path
+    public let size: Int
+    
+    init(path: String) {
+        self.path = Path(path)
+        self.size = self.path.size
+    }
 }
 
 public struct ResoucreReduce {
@@ -60,8 +73,19 @@ public struct ResoucreReduce {
     }
     
     /// 未使用的资源
-    public func unusedResource() -> [FileInfo] {
-        fatalError()
+    /// 抛出错误的写法
+    public func unusedResources() throws -> [FileInfo] {
+        guard !resourceExtensions.isEmpty else {
+            throw GYReduceError.noResourceExtension
+        }
+        guard !fileExtensions.isEmpty else {
+            throw GYReduceError.noFileExtension
+        }
+        let resource = allResources()
+        let allStrings = allUsedStringNames()
+        
+        //找到所有未使用的图片的路径 -> 再转化 FileInfo
+        return ResoucreReduce.filterUnused(from: resource, used: allStrings).map(FileInfo.init)
     }
 
     /// 所有使用了的图片名称 返回集合<可以去掉重复名称>
@@ -109,14 +133,16 @@ public struct ResoucreReduce {
     }
     
     
-    /// 搜索的文件夹下使用的资源
-    func resourceInUse() -> [String: String] {
+    /// 搜索的文件夹下所有使用的资源
+    func allResources() -> [String: String] {
         guard let process = FindProcess(path: projectPath, extensions: resourceExtensions, excluded: excludedPaths) else { return [:] }
         
         let found = process.execute()
         var result = [String: String]()
         // 默认忽略的资源扩展名, 因为这里面会有重复的
         let regularDirExtensions = ["imageset", "launchimage", "appiconset", "bundle"]
+        let nonDirExtensions = resourceExtensions.filter { !regularDirExtensions.contains($0) }
+        
         // 遍历搜索到的资源路径
         fileLoop: for file in found {
             let dirPath = regularDirExtensions.map{".\($0)/"}
@@ -124,15 +150,50 @@ public struct ResoucreReduce {
             // 两层循环, 跳到最外层的循环 用标签
             for dir in dirPath where file.contains(dir) { continue fileLoop }
             
+            // 如果文件夹目录是 /image.png/icon@2x.png
+            // image.png 名字不符合规则的目录, 跳过
+            let filePath = Path(file)
+            if let ext = filePath.extension, filePath.isDeletable && nonDirExtensions.contains(ext) {
+                continue
+            }
+            
+            let key = file.plainName(extensions: resourceExtensions)
+            if let existing = result[key] {
+                // 找到重复名称的图片, 警告用户, 架构不合理
+                print("Found a duplicated file key: \(key), Existing: \(existing)".yellow.bold)
+                continue
+            }
+            result[key] = file
         }
-        fatalError()
+        return result
     }
     
+    /// 从所有资源文件中过滤出所有未使用过的字符串
+    static func filterUnused(from all: [String: String], used: Set<String>) -> Set<String> {
+        let unusedPairs = all.filter { key, _  in
+            return !used.contains(key) &&
+                   !used.contains { $0.similarPatternWithNumberIndex(other: key) }
+        }
+        return Set( unusedPairs.map{ $0.value } )
+    }
+    
+    
     /// 删除
-    public func delete() {
-        
+    static public func delete(_ unusedFiles: [FileInfo]) -> [(FileInfo, Error)] {
+        var failed = [(FileInfo, Error)]()
+        for file in unusedFiles {
+            do{
+                try file.path.delete()
+            }catch {
+                failed.append((file, error))
+            }
+        }
+        return failed
     }
     
 }
+
+
+
 
 

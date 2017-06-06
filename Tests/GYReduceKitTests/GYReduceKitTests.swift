@@ -9,6 +9,10 @@ import XCTest
     然后去逐个运行里面以小写test开头的方法
  */
 
+
+/// swift generate xcode coverage : 生成测试报告,覆盖率什么的(好像是这么写, 需要调研)
+
+
 class GYReduceKitTests: XCTestCase {
     
     // 一般的测试
